@@ -19,12 +19,15 @@ Requirements
  * Glib 2.28+
 
 Additional features are supported up to Glib version 2.44
+
 Features are enabled at compile time based on the library version they are compiled against.
+
 Documentation and information about the underlying library can be found at [gnome.org](http://developer.gnome.org/glib/stable/)
 
 Installation
 =============
 There are plans to make this available via [pecl](http://pecl.php.net) and [pickle](https://github.com/FriendsOfPHP/pickle)
+
 
 Until then, please compile and install the extension and enable it in your php.ini file
 
@@ -70,8 +73,11 @@ The examples directory holds samples of all currently working utilities for the 
 Community
 =====
 You can find us on [freenode](http://freenode.org) on #gtkforphp
+
 The main website is [Gtk For PHP](http://gtkforphp.net)
+
 You can send comments, patches, questions [here on github](https://github.com/gtkforphp/glib/issues)
+
 See Contributing.md for information on how to get involved
 
 Authors
