@@ -76,6 +76,8 @@ You can find us on [freenode](http://freenode.org) on #gtkforphp
 
 The main website is [Gtk For PHP](http://gtkforphp.net)
 
+You can view commits and released on [twitter](http://twitter.com/gtkforphp)
+
 You can send comments, patches, questions [here on github](https://github.com/gtkforphp/glib/issues)
 
 See Contributing.md for information on how to get involved
