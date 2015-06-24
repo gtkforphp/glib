@@ -96,4 +96,5 @@ The Glib library is is released under the [LGPL](https://www.gnu.org/licenses/ol
 Documentation
 =====
 What little documentation we currently have is in code comments and the docs directory
+
 We'd like to use some kind of markdown or rst format for docs, a decision isn't final yet
