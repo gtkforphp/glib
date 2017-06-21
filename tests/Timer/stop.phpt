@@ -1,9 +1,11 @@
 --TEST--
-Glib\Timer->stop
+Glib\Timer->stop()
 --SKIPIF--
 <?php include __DIR__ . '/../skipif.inc'; ?>
 --FILE--
 <?php
+declare(strict_types=1);
+
 use Glib\Timer;
 
 class foo extends Timer{}
