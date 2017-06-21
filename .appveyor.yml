@@ -1,0 +1,50 @@
+environment:
+    matrix:
+        - PHP_VERSION 7.0
+        - PHP_VERSION 7.1
+    PHP_SDK: c:\projects\php-sdk
+
+os: Windows Server 2012
+clone_folder: c:\projects\php-sdk\glib-build\vc14\%Platform%\php\ext\glib
+
+platform:
+  - x64
+  - x86
+
+install:
+  - cd %PHP_SDK%
+  - curl -fSL -o php-sdk-binary-tools-20110915.zip "http://windows.php.net/downloads/php-sdk/php-sdk-binary-tools-20110915.zip"
+  - 7z.exe x php-sdk-binary-tools-20110915.zip
+  - call bin\phpsdk_setvars.bat
+  - call bin\phpsdk_buildtree.bat glib-build
+  - cd glib-build\vc14\%Platform%
+  - if not exist php mkdir php
+  - if not exist php\ext mkdir php\ext
+  - cd php\ext
+  - md deps
+  - cd deps
+  - curl -fSL -o "php-%PHP_VERSION%.tar.gz" "http://us1.php.net/distributions/php-%PHP_VERSION%.tar.gz"
+  - ren php php-%PHP_VERSION%
+  - 7z.exe x php-%PHP_VERSION%.tar.gz -y
+  - 7z.exe x php-%PHP_VERSION%.tar -y | find /v "Extracting"
+  - cd php-%PHP_VERSION%
+
+build_script:
+  - ps: >-
+      If ($env:Platform -Match "x86") {
+        $env:VCVARS_PLATFORM="x86"
+        $env:ENV_PLATFORM="x86"
+      } Else {
+        $env:VCVARS_PLATFORM="amd64"
+        $env:ENV_PLATFORM="x64"
+      }
+  - call "%VS140COMNTOOLS%\..\..\VC\vcvarsall.bat" %VCVARS_PLATFORM%
+  - echo Building Glib for [%PHP_VERSION%]
+  - '%PHP_SDK%\bin\phpsdk_setvars'
+  - buildconf
+  - configure --disable-all --enable-cli --enable-zlib --enable-glib=shared %CONFIGURE_EXTRA%
+  - nmake
+
+test_script:
+    - nmake test
+

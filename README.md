@@ -11,14 +11,15 @@ This extension provides access to Glib functionality in PHP7 in the Glib namespa
 Status
 =============
 This is currently very experimental
-There are plans to add appveyor and travis builds for testing
+Travis builds exist for testing
+AppVeyor setup is started but we're missing reliable glib windows builds for vc14
 
 Requirements
 =============
- * PHP 7.0.0-alpha1+
- * Glib 2.28+
+ * PHP 7.0.0+
+ * Glib 2.40+
 
-Additional features are supported up to Glib version 2.44
+Additional features are supported up to Glib version 2.52
 
 Features are enabled at compile time based on the library version they are compiled against.
 
@@ -26,7 +27,7 @@ Documentation and information about the underlying library can be found at [gnom
 
 Installation
 =============
-There are plans to make this available via [pecl](http://pecl.php.net) and [pickle](https://github.com/FriendsOfPHP/pickle)
+Currently there are no releases or binary versions available
 
 
 Until then, please compile and install the extension and enable it in your php.ini file
@@ -80,7 +81,7 @@ You can view commits and released on [twitter](http://twitter.com/gtkforphp)
 
 You can send comments, patches, questions [here on github](https://github.com/gtkforphp/glib/issues)
 
-See Contributing.md for information on how to get involved
+Pull Requests are always welcome
 
 Authors
 ====
@@ -95,6 +96,6 @@ The Glib library is is released under the [LGPL](https://www.gnu.org/licenses/ol
 
 Documentation
 =====
-What little documentation we currently have is in code comments and the docs directory
+What little documentation exists is in code comments and the docs directory
 
-We'd like to use some kind of markdown or rst format for docs, a decision isn't final yet
+Setup for ReadTheDocs or a similar service would be appreciated

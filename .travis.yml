@@ -1,0 +1,31 @@
+sudo: false
+
+language: php
+
+dist: trusty
+
+addons:
+  apt:
+    packages:
+      - libglib2.0-dev
+
+php:
+  - 7.0
+  - 7.1
+  - nightly
+ 
+env: 
+  - REPORT_EXIT_STATUS=1 NO_INTERACTION=1 TEST_PHP_ARGS="--show-diff -q"
+  
+install:
+  - phpize
+  - ./configure
+  - make
+
+script: 
+  make test
+
+notifications:
+  email:
+    auroraeosrose@gmail.com
+
