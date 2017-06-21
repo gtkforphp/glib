@@ -104,6 +104,47 @@ PHP_METHOD(GlibMainContext, pending)
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO(Context_wakeup_args, IS_VOID, 0)
+ZEND_END_ARG_INFO()
+
+/* {{{ proto void \Glib\Main\Context->wakeup()
+		If context is currently waiting in a poll(), interrupt the poll(), and continue the iteration process.
+   */
+PHP_METHOD(GlibMainContext, wakeup)
+{
+	glib_main_context_object *context_object;
+
+	if (zend_parse_parameters_none_throw() == FAILURE) {
+		return;
+	}
+
+	context_object = Z_GLIB_MAIN_CONTEXT_P(getThis());
+
+	g_main_context_wakeup(context_object->main_context);
+}
+/* }}} */
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO(Context_isOwner_args, _IS_BOOL, 0)
+ZEND_END_ARG_INFO()
+
+/* {{{ proto void \Glib\Main\Context->isOwner()
+		does the thread hold recursive ownership of this context
+   */
+PHP_METHOD(GlibMainContext, isOwner)
+{
+	glib_main_context_object *context_object;
+
+	if (zend_parse_parameters_none_throw() == FAILURE) {
+		return;
+	}
+
+	context_object = Z_GLIB_MAIN_CONTEXT_P(getThis());
+
+	RETURN_BOOL(g_main_context_is_owner(context_object->main_context));
+}
+/* }}} */
+
+
 /* {{{ proto \Glib\Main\Context object \Glib\Main\Context::getDefault();
         Returns the default main context. This is the main context used for
 		main loop functions when a main loop is not explicitly specified.
@@ -120,21 +161,6 @@ PHP_METHOD(Glib_Main_Context, getDefault)
 	context_object = (glib_maincontext_object *)zend_objects_get_address(return_value TSRMLS_CC);
 	context_object->maincontext = g_main_context_new();
 	g_main_context_ref(context_object->maincontext);
-}
-/* }}} */
-
-/* {{{ proto void \Glib\Main\Context->wakeup()
-		If context is currently waiting in a poll(), interrupt the poll(), and continue the iteration process.
-   
-PHP_METHOD(Glib_Main_Context, wakeup)
-{
-	glib_maincontext_object *context_object = (glib_maincontext_object *)glib_maincontext_object_get(getThis() TSRMLS_CC);
-
-	if (zend_parse_parameters_none() == FAILURE) {
-		return;
-	}
-
-	g_main_context_wakeup(context_object->maincontext);
 }
 /* }}} */
 
@@ -218,6 +244,8 @@ static const zend_function_entry glib_main_context_methods[] = {
 	PHP_ME(GlibMainContext, __construct, Context___construct_args, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
 	PHP_ME(GlibMainContext, iteration, Context_iteration_args, ZEND_ACC_PUBLIC)
 	PHP_ME(GlibMainContext, pending, Context_pending_args, ZEND_ACC_PUBLIC)
+	PHP_ME(GlibMainContext, wakeup, Context_wakeup_args, ZEND_ACC_PUBLIC)
+	PHP_ME(GlibMainContext, isOwner, Context_isOwner_args, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
 
