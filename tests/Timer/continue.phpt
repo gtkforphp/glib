@@ -1,38 +1,51 @@
 --TEST--
 Glib\Timer->continue
 --SKIPIF--
-<?php if (!extension_loaded("glib")) print "skip"; ?>
+<?php include __DIR__ . '/../skipif.inc'; ?>
 --FILE--
 <?php
 use Glib\Timer;
 
 class foo extends Timer{}
-class bad extends Timer {
-    public function __construct() {}
+
+// Basic use case - stop timer then continue it
+$object = new Timer();
+$first = $object->elapsed();
+$object->stop();
+$object->continue();
+$second = $object->elapsed();
+// second should be greater than first
+var_dump($second > $first);
+
+// repeat use case with extended class
+$object = new foo();
+$first = $object->elapsed();
+$object->stop();
+$object->continue();
+$second = $object->elapsed();
+// second should be greater than first
+var_dump($second > $first);
+
+// error with wrong args
+try {
+	$object = new Timer();
+	$object->continue('hello');
+} catch (TypeError $e) {
+	echo $e->getMessage(), PHP_EOL;
 }
 
-$object = new Timer();
-$object->continue();
-$object->stop();
-$object->continue();
-echo $object->elapsed(), PHP_EOL;
-
-$object = new foo();
-$object->continue();
-$object->stop();
-$object->continue();
-echo $object->elapsed(), PHP_EOL;
-
-$object = new bad();
-$object->continue();
+// error continuing a non-stopped timer
+try {
+	$object = new Timer();
+	$object->continue();
+} catch (BadMethodCallException $e) {
+	echo $e->getMessage(), PHP_EOL;
+}
 
 ?>
---EXPECTF--
+--EXPECT--
+bool(true)
+bool(true)
+Glib\Timer::continue() expects exactly 0 parameters, 1 given
+Cannot call continue on a timer that has not been stopped
 
-Warning: Glib\Timer::continue(): Cannot continue a Timer that has not been stopped in %s on line %d
-%f
-
-Warning: Glib\Timer::continue(): Cannot continue a Timer that has not been stopped in %s on line %d
-%f
-
-Fatal error: Glib\Timer::continue(): Internal object missing in bad class, you must call parent::__construct in extended classes in %s on line %d

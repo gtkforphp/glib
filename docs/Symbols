@@ -1,0 +1,71 @@
+GTimer		Glib\Timer
+g_timer_new	(__construct)		create_object handler
+g_timer_start	Timer->start		really more of "reset"
+g_timer_stop	Timer->stop		really more of "mark"
+g_timer_elapsed	Timer->elapsed
+g_timer_reset	IGNORED (use start)	
+g_timer_destroy	(__destruct)		free_obj handler
+
+GMainContext	Glib\Main\Context
+
+Used Not Exposed:
+g_main_context_new	 (create_object_handler)
+g_main_context_ref       (create_object_handler)
+g_main_context_unref     (free_obj_handler)
+g_main_context_aquire	 (used in prepare, query, check, dispatch)
+g_main_context_release	 (used in prepare, query, check, dispatch)
+
+Ignored:
+g_main_iteration (deprecated, used g_main_context_iteration)
+g_main_pending (deprecated, used g_main_context_pending)
+g_main_set_poll_func (deprecated, used g_main_context_set_poll_func)
+g_main_context_get_thread_default (deprecated, used g_main_context_ref_thread_default)
+
+Static:
+g_main_context_default  		Context::getDefault (static constructor)
+g_main_context_ref_thread_default	Context::getThreadDefault (static constructor)
+
+Methods:
+g_main_context_iteration		Context->iteration
+g_main_context_pending			Context->pending
+g_main_context_wakeup			Context->wakeup
+g_main_context_is_owner			Context->isOwner
+g_main_context_wait			Context->wait
+g_main_context_prepare			Context->prepare
+g_main_context_query			Context->query
+g_main_context_check			Context->check
+g_main_context_dispatch			Context->dispatch
+g_main_context_set_poll_func		Context->setPoll
+g_main_context_get_poll_func		Context->getPoll
+g_main_context_add_poll			Context->addPoll
+g_main_context_remove_poll		Context->removePoll
+g_main_context_push_thread_default	Context->pushThreadDefault
+g_main_context_pop_thread_default	Context->popThreadDefault
+
+Merged Methods:
+Might do these separate OR merged, waiting on source completion
+g_main_context_find_source_by_id	Context->findSourceById
+g_main_context_find_source_by_user_data Context->findSourceByData
+g_main_context_find_source_by_funcs_user_data Context->findSourceByFuncsData
+
+g_main_context_invoke
+g_main_context_invoke_full		Context->invoke
+
+functions in Glib\Main
+g_main_depth		Glib\Main\depth() : int
+g_main_current_source	Glib\Main\current_source() : Glib\Main\Source
+
+
+
+GSource		Glib\Source
+
+
+
+
+
+
+
+
+
+
+

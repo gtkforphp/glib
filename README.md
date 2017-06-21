@@ -19,6 +19,7 @@ Requirements
  * PHP 7.0.0+
  * Glib 2.40+
 
+Glib 2.40 is the minimum version currently in Ubuntu 14.04
 Additional features are supported up to Glib version 2.52
 
 Features are enabled at compile time based on the library version they are compiled against.

@@ -2,7 +2,7 @@
   +----------------------------------------------------------------------+
   | For PHP Version 7                                                    |
   +----------------------------------------------------------------------+
-  | Copyright (c) 2015 Elizabeth M Smith                                 |
+  | Copyright (c) 2017 Elizabeth M Smith                                 |
   +----------------------------------------------------------------------+
   | http://www.opensource.org/licenses/mit-license.php  MIT License      |
   | Also available in LICENSE                                            |
@@ -18,19 +18,19 @@
 #include <php.h>
 #include <glib.h>
 
-#include "php_glib.h"
+#include "ext/standard/info.h"
 
-/* {{{ PHP_MINIT_FUNCTION
- */
+#include "php_glib.h"
+#include "php_glib_internal.h"
+
 PHP_MINIT_FUNCTION(glib)
 {
 	PHP_MINIT(glib_timer)(INIT_FUNC_ARGS_PASSTHRU);
+
+	PHP_MINIT(glib_main_context)(INIT_FUNC_ARGS_PASSTHRU);
 	return SUCCESS;
 }
-/* }}} */
 
-/* {{{ PHP_MINFO_FUNCTION
- */
 PHP_MINFO_FUNCTION(glib)
 {
 	char output_buf[58];
@@ -42,9 +42,7 @@ PHP_MINFO_FUNCTION(glib)
 	php_info_print_table_row(2, "Extension Version", PHP_GLIB_VERSION);
 	php_info_print_table_end();
 }
-/* }}} */
 
-/* {{{ glib_module_entry */
 zend_module_entry glib_module_entry = {
 	STANDARD_MODULE_HEADER,
 	"glib",
@@ -57,17 +55,7 @@ zend_module_entry glib_module_entry = {
 	PHP_GLIB_VERSION,
 	STANDARD_MODULE_PROPERTIES
 };
-/* }}} */
 
 #ifdef COMPILE_DL_GLIB
 	ZEND_GET_MODULE(glib)
 #endif
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

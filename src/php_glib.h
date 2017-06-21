@@ -2,7 +2,7 @@
   +----------------------------------------------------------------------+
   | For PHP Version 7                                                    |
   +----------------------------------------------------------------------+
-  | Copyright (c) 2015 Elizabeth M Smith                                 |
+  | Copyright (c) 2017 Elizabeth M Smith                                 |
   +----------------------------------------------------------------------+
   | http://www.opensource.org/licenses/mit-license.php  MIT License      |
   | Also available in LICENSE                                            |
@@ -23,12 +23,3 @@ extern zend_module_entry glib_module_entry;
 #define GLIB_NAMESPACE "Glib"
 
 #endif /* PHP_GLIB_EXT_H */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: noet sw=4 ts=4 fdm=marker
- * vim<600: noet sw=4 ts=4
- */

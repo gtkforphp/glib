@@ -1,31 +1,48 @@
 --TEST--
 Glib\Timer->stop
 --SKIPIF--
-<?php if (!extension_loaded("glib")) print "skip"; ?>
+<?php include __DIR__ . '/../skipif.inc'; ?>
 --FILE--
 <?php
 use Glib\Timer;
 
 class foo extends Timer{}
-class bad extends Timer {
-    public function __construct() {}
-}
 
+// Basic use case tops timing
 $object = new Timer();
 $object->stop();
-echo $object->elapsed(), PHP_EOL;
+$first = $object->elapsed();
+usleep(1);
+$second = $object->elapsed();
+var_dump($first == $second); // only showing start -> stop time
+$object->stop(); // new mark
+$third = $object->elapsed();
+var_dump($second < $third);
 
+// extedned use case tops timing
 $object = new foo();
 $object->stop();
-echo $object->elapsed(), PHP_EOL;
+$first = $object->elapsed();
+usleep(1);
+$second = $object->elapsed();
+var_dump($first == $second); // only showing start -> stop time
+$object->stop(); // new mark
+$third = $object->elapsed();
+var_dump($second < $third);
 
-$object = new bad();
-$object->stop();
-echo $object->elapsed(), PHP_EOL;
+
+// error with wrong args
+try {
+    $object = new Timer();
+    $object->stop('hello');
+} catch (TypeError $e) {
+	echo $e->getMessage(), PHP_EOL;
+}
 
 ?>
---EXPECTF--
-%f
-%f
-
-Fatal error: Glib\Timer::stop(): Internal object missing in bad class, you must call parent::__construct in extended classes in %s on line %d
+--EXPECT--
+bool(true)
+bool(true)
+bool(true)
+bool(true)
+Glib\Timer::stop() expects exactly 0 parameters, 1 given
