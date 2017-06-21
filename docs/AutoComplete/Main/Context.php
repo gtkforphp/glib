@@ -56,7 +56,11 @@ class Context
     }
     */
     
-    public function prepare(int $priority) : bool
+    /**
+     * Returns an array where [0] == boolean status
+     * and [1] == integer priority
+     */
+    public function prepare() : array
     {
     }
     

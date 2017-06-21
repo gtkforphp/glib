@@ -1,6 +1,8 @@
 Glib for PHP 7
 =============
 
+[![Build Status](https://travis-ci.org/gtkforphp/glib.svg?branch=master)](https://travis-ci.org/gtkforphp/glib)
+
 Glib is a general-purpose utility library originally written for the gnome desktop system. It
 provides data types, conversions, string utilities, file utilities, mainloop
 abstractions and other useful tools for building applications. The library works

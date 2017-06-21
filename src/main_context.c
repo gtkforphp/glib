@@ -144,6 +144,45 @@ PHP_METHOD(GlibMainContext, isOwner)
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO(Context_prepare_args, IS_ARRAY, 0)
+ZEND_END_ARG_INFO()
+
+/* {{{ proto array(boolean, int) \Glib\Main\Context->prepare()
+		Checks if any sources have pending events for the given context.
+		Returns an array of status (true if some source is ready to be dispatched prior to polling)
+		and integer priority (priority of highest priority source already ready)
+  */ 
+PHP_METHOD(GlibMainContext, prepare)
+{
+	gint priority;
+	gboolean status;
+	gboolean aquire;
+	glib_main_context_object *context_object;
+
+	if (zend_parse_parameters_none_throw() == FAILURE) {
+		return;
+	}
+
+	context_object = Z_GLIB_MAIN_CONTEXT_P(getThis());
+	
+	/* we must aquire first */
+	aquire = g_main_context_acquire(context_object->main_context);
+
+	if(!aquire) {
+		zend_throw_exception(spl_ce_RuntimeException, "Could not aquire the specified context", 0);
+		return;
+	}
+
+	status = g_main_context_prepare(context_object->main_context, &priority);
+
+	array_init(return_value);
+	add_next_index_bool(return_value, status);
+	add_next_index_long(return_value, priority);
+	
+	g_main_context_release(context_object->main_context);
+}
+/* }}} */
+
 
 /* {{{ proto \Glib\Main\Context object \Glib\Main\Context::getDefault();
         Returns the default main context. This is the main context used for
@@ -164,27 +203,7 @@ PHP_METHOD(Glib_Main_Context, getDefault)
 }
 /* }}} */
 
-/* {{{ proto array(boolean, int) \Glib\Main\Context->prepare()
-		Checks if any sources have pending events for the given context.
-		Returns an array of status (true if some source is ready to be dispatched prior to polling)
-		and integer priority (priority of highest priority source already ready)
-   
-PHP_METHOD(Glib_Main_Context, prepare)
-{
-	gint priority;
-	gboolean status;
-	glib_maincontext_object *context_object = (glib_maincontext_object *)glib_maincontext_object_get(getThis() TSRMLS_CC);
 
-	if (zend_parse_parameters_none() == FAILURE) {
-		return;
-	}
-
-	status = g_main_context_prepare(context_object->maincontext, &priority);
-	array_init(return_value);
-	add_next_index_bool(return_value, status);
-	add_next_index_long(return_value, priority);
-}
-/* }}} */
 
 /* {{{ proto void \Glib\Main\Context->dispatch()
 		Dispatches all pending sources
@@ -246,6 +265,7 @@ static const zend_function_entry glib_main_context_methods[] = {
 	PHP_ME(GlibMainContext, pending, Context_pending_args, ZEND_ACC_PUBLIC)
 	PHP_ME(GlibMainContext, wakeup, Context_wakeup_args, ZEND_ACC_PUBLIC)
 	PHP_ME(GlibMainContext, isOwner, Context_isOwner_args, ZEND_ACC_PUBLIC)
+	PHP_ME(GlibMainContext, prepare, Context_prepare_args, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
 
