@@ -38,6 +38,8 @@ static inline glib_main_context_object *glib_main_context_fetch_object(zend_obje
 }
 #define Z_GLIB_MAIN_CONTEXT_P(zv) glib_main_context_fetch_object(Z_OBJ_P(zv))
 
+static zend_object* glib_main_context_get_default_object(zend_class_entry *ce, zend_bool get_default);
+
 /* ----------------------------------------------------------------
     Glib\Main\Context class API
 ------------------------------------------------------------------*/
@@ -156,7 +158,7 @@ PHP_METHOD(GlibMainContext, prepare)
 {
 	gint priority;
 	gboolean status;
-	gboolean aquire;
+	gboolean acquire;
 	glib_main_context_object *context_object;
 
 	if (zend_parse_parameters_none_throw() == FAILURE) {
@@ -166,10 +168,10 @@ PHP_METHOD(GlibMainContext, prepare)
 	context_object = Z_GLIB_MAIN_CONTEXT_P(getThis());
 	
 	/* we must aquire first */
-	aquire = g_main_context_acquire(context_object->main_context);
+	acquire = g_main_context_acquire(context_object->main_context);
 
-	if(!aquire) {
-		zend_throw_exception(spl_ce_RuntimeException, "Could not aquire the specified context", 0);
+	if(!acquire) {
+		zend_throw_exception(spl_ce_RuntimeException, "Could not acquire the specified context", 0);
 		return;
 	}
 
@@ -183,41 +185,74 @@ PHP_METHOD(GlibMainContext, prepare)
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO(Context_dispatch_args, IS_VOID, 0)
+ZEND_END_ARG_INFO()
 
-/* {{{ proto \Glib\Main\Context object \Glib\Main\Context::getDefault();
-        Returns the default main context. This is the main context used for
-		main loop functions when a main loop is not explicitly specified.
-   
-PHP_METHOD(Glib_Main_Context, getDefault)
+/* {{{ proto void \Glib\Main\Context->dispatch()
+		Dispatches all pending sources
+   */
+PHP_METHOD(GlibMainContext, dispatch)
 {
-	glib_maincontext_object *context_object;
+	glib_main_context_object *context_object;
+	gboolean acquire;
 
-	if (zend_parse_parameters_none() == FAILURE) {
+	if (zend_parse_parameters_none_throw() == FAILURE) {
 		return;
 	}
 
-	object_init_ex(return_value, glib_ce_maincontext);
-	context_object = (glib_maincontext_object *)zend_objects_get_address(return_value TSRMLS_CC);
-	context_object->maincontext = g_main_context_new();
-	g_main_context_ref(context_object->maincontext);
+	context_object = Z_GLIB_MAIN_CONTEXT_P(getThis());
+	
+	/* we must aquire first */
+	acquire = g_main_context_acquire(context_object->main_context);
+
+	if(!acquire) {
+		zend_throw_exception(spl_ce_RuntimeException, "Could not aquire the specified context", 0);
+		return;
+	}
+
+	g_main_context_dispatch(context_object->main_context);
+	g_main_context_release(context_object->main_context);
 }
 /* }}} */
 
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO(Context_getDefault_args, "Glib\\Main\\Context", 0)
+ZEND_END_ARG_INFO()
 
-/* {{{ proto void \Glib\Main\Context->dispatch()
-		Dispatches all pending sources
-   
-PHP_METHOD(Glib_Main_Context, dispatch)
+/* {{{ proto \Glib\Main\Context object \Glib\Main\Context::getDefault();
+        Returns the default main context. This is the main context used for
+		main loop functions when a main loop is not explicitly specified.
+   */
+PHP_METHOD(GlibMainContext, getDefault)
 {
-	glib_maincontext_object *context_object = (glib_maincontext_object *)glib_maincontext_object_get(getThis() TSRMLS_CC);
+	glib_main_context_object *context_object;
 
-	if (zend_parse_parameters_none() == FAILURE) {
+	if (zend_parse_parameters_none_throw() == FAILURE) {
 		return;
 	}
 
-	g_main_context_dispatch(context_object->maincontext);
+	ZVAL_OBJ(return_value, glib_main_context_get_default_object(ce_glib_main_context, TRUE));
 }
+/* }}} */
+
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO(Context_getThreadDefault_args, "Glib\\Main\\Context", 0)
+ZEND_END_ARG_INFO()
+
+/* {{{ proto \Glib\Main\Context object \Glib\Main\Context::getThreadDefault();
+        Returns the default main context. This is the main context used for
+		main loop functions when a main loop is not explicitly specified.
+   */
+PHP_METHOD(GlibMainContext, getThreadDefault)
+{
+	glib_main_context_object *context_object;
+
+	if (zend_parse_parameters_none_throw() == FAILURE) {
+		return;
+	}
+
+	ZVAL_OBJ(return_value, glib_main_context_get_default_object(ce_glib_main_context, FALSE));
+}
+
 /* }}} */
 
 /* ----------------------------------------------------------------
@@ -255,6 +290,26 @@ static zend_object* glib_main_context_create_object(zend_class_entry *ce)
 	return &(intern->std);
 }
 
+/* Custom object creation - for our specialty getDefault and getDefaultThread */
+static zend_object* glib_main_context_get_default_object(zend_class_entry *ce, zend_bool get_default)
+{
+	glib_main_context_object *intern = NULL;
+
+	intern = ecalloc(1, sizeof(glib_main_context_object) + zend_object_properties_size(ce));
+
+	if(get_default) {
+		intern->main_context = g_main_context_default();
+		intern->main_context = g_main_context_ref(intern->main_context);
+	} else {
+		intern->main_context = g_main_context_ref_thread_default();
+	}
+	
+	zend_object_std_init(&(intern->std), ce);
+	object_properties_init(&(intern->std), ce);
+	intern->std.handlers = &glib_main_context_object_handlers;
+	return &(intern->std);
+}
+
 /* ----------------------------------------------------------------
     Glib\MainContext Class Definition and Registration
 ------------------------------------------------------------------*/
@@ -266,6 +321,9 @@ static const zend_function_entry glib_main_context_methods[] = {
 	PHP_ME(GlibMainContext, wakeup, Context_wakeup_args, ZEND_ACC_PUBLIC)
 	PHP_ME(GlibMainContext, isOwner, Context_isOwner_args, ZEND_ACC_PUBLIC)
 	PHP_ME(GlibMainContext, prepare, Context_prepare_args, ZEND_ACC_PUBLIC)
+	PHP_ME(GlibMainContext, dispatch, Context_dispatch_args, ZEND_ACC_PUBLIC)
+	PHP_ME(GlibMainContext, getDefault, Context_getDefault_args, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	PHP_ME(GlibMainContext, getThreadDefault, Context_getThreadDefault_args, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	ZEND_FE_END
 };
 

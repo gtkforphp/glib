@@ -96,6 +96,10 @@ class Context
     }
     */
     
+    public function dispatch() : void 
+    {
+    }
+    
     /*
     this will mean wrappers around gsourcefunc, grpointer, and gdestroynotify
     public function invoke(callable $callback, ?int $priority, ?callable $notify_callback) : void
