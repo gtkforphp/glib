@@ -14,6 +14,7 @@ $object = new Timer();
 $first = $object->elapsed();
 $object->stop();
 $object->continue();
+usleep(10);
 $second = $object->elapsed();
 // second should be greater than first
 var_dump($second > $first);
@@ -23,6 +24,7 @@ $object = new foo();
 $first = $object->elapsed();
 $object->stop();
 $object->continue();
+usleep(10);
 $second = $object->elapsed();
 // second should be greater than first
 var_dump($second > $first);

@@ -24,7 +24,7 @@
 #include "php_glib.h"
 #include "php_glib_internal.h"
 
-zend_class_entry *ce_glib_timer;
+zend_class_entry *glib_ce_timer;
 static zend_object_handlers glib_timer_object_handlers;
 
 typedef struct _glib_timer_object {
@@ -210,7 +210,7 @@ PHP_MINIT_FUNCTION(glib_timer)
 
 	INIT_NS_CLASS_ENTRY(ce, GLIB_NAMESPACE, "Timer", glib_timer_methods);
 	ce.create_object = glib_timer_create_object;
-	ce_glib_timer = zend_register_internal_class(&ce);
+	glib_ce_timer = zend_register_internal_class(&ce);
 
 	return SUCCESS;
 }

@@ -28,6 +28,7 @@ PHP_MINIT_FUNCTION(glib)
 	PHP_MINIT(glib_timer)(INIT_FUNC_ARGS_PASSTHRU);
 
 	PHP_MINIT(glib_main_context)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(glib_main_loop)(INIT_FUNC_ARGS_PASSTHRU);
 	return SUCCESS;
 }
 

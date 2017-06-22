@@ -4,6 +4,8 @@ Glib\Main\Context->__construct
 <?php include __DIR__ . '/../../skipif.inc'; ?>
 --FILE--
 <?php
+declare(strict_types=1);
+
 use Glib\Main\Context;
 
 class foo extends Context {}

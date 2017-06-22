@@ -4,6 +4,8 @@ Glib\Main\Context::getDefault()
 <?php include __DIR__ . '/../../skipif.inc'; ?>
 --FILE--
 <?php
+declare(strict_types=1);
+
 use Glib\Main\Context;
 
 $object = Context::getDefault();

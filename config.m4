@@ -14,6 +14,7 @@ if test "$PHP_GLIB" != "no"; then
     src/glib.c \
     src/timer.c \
     src/main_context.c \
+    src/main_loop.c \
   , $ext_shared)
 
   EXT_GLIB_HEADERS="php_glib_api.h"

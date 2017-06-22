@@ -1,25 +1,35 @@
-GTimer		Glib\Timer
-g_timer_new	(__construct)		create_object handler
-g_timer_start	Timer->start		really more of "reset"
-g_timer_stop	Timer->stop		really more of "mark"
-g_timer_elapsed	Timer->elapsed
-g_timer_reset	IGNORED (use start)	
-g_timer_destroy	(__destruct)		free_obj handler
+GTimer					Glib\Timer
+g_timer_new				(__construct)		
+g_timer_start				Timer->start
+g_timer_stop				Timer->stop
+g_timer_elapsed				Timer->elapsed
+g_timer_reset				IGNORED (use start)	
+g_timer_destroy				(__destruct)
 
-GMainContext	Glib\Main\Context
+GMainLoop				Glib\Main\Loop
+g_main_loop_new				(__construct)
+g_main_loop_ref 			(__construct)
+g_main_loop_unref 			(__destruct)
+g_main_loop_run				Loop->run
+g_main_loop_quit			Loop->quit
+g_main_loop_is_running			Loop->isRunning
+g_main_loop_get_context			Loop->getContext
+g_main_new				IGNORED (use new Loop)
+g_main_destroy				IGNORED (use unset(Loop))
+g_main_run				IGNORED (use Loop->run)
+g_main_quit				IGNORED (use Loop->quit)
+g_main_is_running			IGNORED (use Loop->isRunning)
 
-Used Not Exposed:
-g_main_context_new	 (create_object_handler)
-g_main_context_ref       (create_object_handler)
-g_main_context_unref     (free_obj_handler)
-g_main_context_aquire	 (used in prepare, query, check, dispatch)
-g_main_context_release	 (used in prepare, query, check, dispatch)
-
-Ignored:
-g_main_iteration (deprecated, used g_main_context_iteration)
-g_main_pending (deprecated, used g_main_context_pending)
-g_main_set_poll_func (deprecated, used g_main_context_set_poll_func)
-g_main_context_get_thread_default (deprecated, used g_main_context_ref_thread_default)
+GMainContext				Glib\Main\Context
+g_main_context_new			(__construct)
+g_main_context_ref      		(__construct)
+g_main_context_unref    		(__destruct)
+g_main_context_aquire			(used in prepare, query, check, dispatch)
+g_main_context_release			(used in prepare, query, check, dispatch)
+g_main_iteration 			IGNORED (use Context->iteration)
+g_main_pending				IGNORED (use Context->pending)
+g_main_set_poll_func			IGNORED (use Context->setPoll)
+g_main_context_get_thread_default	IGNORED (use Context->getThreadDefault)
 
 Static:
 g_main_context_default  		Context::getDefault (static constructor)

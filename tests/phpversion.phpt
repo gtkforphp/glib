@@ -4,6 +4,8 @@ phpversion('glib') value
 <?php include __DIR__ . '/skipif.inc'; ?>
 --FILE--
 <?php
+declare(strict_types=1);
+
 var_dump(phpversion('glib'));
 ?>
 = DONE =

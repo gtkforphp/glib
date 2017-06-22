@@ -24,20 +24,7 @@
 #include "php_glib.h"
 #include "php_glib_internal.h"
 
-zend_class_entry *ce_glib_main_context;
 static zend_object_handlers glib_main_context_object_handlers;
-
-typedef struct _glib_main_context_object {
-	GMainContext *main_context;
-	zend_object std;
-} glib_main_context_object;
-
-static inline glib_main_context_object *glib_main_context_fetch_object(zend_object *object)
-{
-	return (glib_main_context_object *) ((char*)(object) - XtOffsetOf(glib_main_context_object, std));
-}
-#define Z_GLIB_MAIN_CONTEXT_P(zv) glib_main_context_fetch_object(Z_OBJ_P(zv))
-
 static zend_object* glib_main_context_get_default_object(zend_class_entry *ce, zend_bool get_default);
 
 /* ----------------------------------------------------------------
@@ -225,13 +212,11 @@ ZEND_END_ARG_INFO()
    */
 PHP_METHOD(GlibMainContext, getDefault)
 {
-	glib_main_context_object *context_object;
-
 	if (zend_parse_parameters_none_throw() == FAILURE) {
 		return;
 	}
 
-	ZVAL_OBJ(return_value, glib_main_context_get_default_object(ce_glib_main_context, TRUE));
+	ZVAL_OBJ(return_value, glib_main_context_get_default_object(glib_ce_main_context, TRUE));
 }
 /* }}} */
 
@@ -244,13 +229,11 @@ ZEND_END_ARG_INFO()
    */
 PHP_METHOD(GlibMainContext, getThreadDefault)
 {
-	glib_main_context_object *context_object;
-
 	if (zend_parse_parameters_none_throw() == FAILURE) {
 		return;
 	}
 
-	ZVAL_OBJ(return_value, glib_main_context_get_default_object(ce_glib_main_context, FALSE));
+	ZVAL_OBJ(return_value, glib_main_context_get_default_object(glib_ce_main_context, FALSE));
 }
 
 /* }}} */
@@ -339,7 +322,7 @@ PHP_MINIT_FUNCTION(glib_main_context)
 
 	INIT_NS_CLASS_ENTRY(ce, GLIB_NAMESPACE, ZEND_NS_NAME("Main", "Context"), glib_main_context_methods);
 	ce.create_object = glib_main_context_create_object;
-	ce_glib_main_context = zend_register_internal_class(&ce);
+	glib_ce_main_context = zend_register_internal_class(&ce);
 
 	return SUCCESS;
 }
