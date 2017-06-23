@@ -35,7 +35,7 @@ typedef struct _glib_main_context_object {
 
 zend_class_entry *glib_ce_main_context;
 
-inline glib_main_context_object *glib_main_context_fetch_object(zend_object *object)
+static inline glib_main_context_object *glib_main_context_fetch_object(zend_object *object)
 {
 	return (glib_main_context_object *) ((char*)(object) - XtOffsetOf(glib_main_context_object, std));
 }
@@ -43,6 +43,7 @@ inline glib_main_context_object *glib_main_context_fetch_object(zend_object *obj
 
 /* Glib Classes to register */
 PHP_MINIT_FUNCTION(glib_main_context);
+PHP_MINIT_FUNCTION(glib_main_loop);
 PHP_MINIT_FUNCTION(glib_timer);
 
 #endif /* PHP_GLIB_INTERNAL_H */
