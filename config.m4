@@ -12,9 +12,10 @@ if test "$PHP_GLIB" != "no"; then
 
   PHP_NEW_EXTENSION(glib, \
     src/glib.c \
-    src/timer.c \
+    src/functions.c \
     src/main_context.c \
     src/main_loop.c \
+    src/timer.c \
   , $ext_shared)
 
   EXT_GLIB_HEADERS="php_glib_api.h"

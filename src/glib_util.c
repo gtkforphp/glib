@@ -28,12 +28,6 @@
 
 zend_class_entry *glib_ce_glib;
 
-ZEND_BEGIN_ARG_INFO_EX(glib_checkVersion_args, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
-	ZEND_ARG_INFO(0, major)
-	ZEND_ARG_INFO(0, minor)
-	ZEND_ARG_INFO(0, micro)
-ZEND_END_ARG_INFO()
-
 ZEND_BEGIN_ARG_INFO_EX(glib_string_args, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
 	ZEND_ARG_INFO(0, text)
 ZEND_END_ARG_INFO()
@@ -41,47 +35,6 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(glib_userSpecialDir_args, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 1)
 	ZEND_ARG_INFO(0, user_dir_type)
 ZEND_END_ARG_INFO()
-
-/* {{{ proto string Glib::checkRuntimeVersion()
-	 Returns NULL if the GLib library is compatible with the given version, or a string describing the version mismatch.
-	 Compatibility is defined by two things: first the version of the running library is newer than the version
-	 major.minor.micro. Second the running library must be binary compatible with the version
-	 majore.minor.micro (same major version.)
-   */
-PHP_METHOD(Glib, checkRuntimeVersion)
-{
-	long major = 0, micro = 0, minor = 0;
-	const char * version_error;
-
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l|ll", &major, &minor, &micro) == FAILURE) {
-		return;
-	}
-
-	version_error = glib_check_version(major, minor, micro);
-	if (version_error == NULL) {
-		return;
-	} else {
-		RETURN_STRING(version_error, 1);
-	}
-}
-/* }}} */
-
-/* {{{ proto boolean Glib::checkVersion()
-	   Checks the version of the GLib library the extension was compiled against.
-	   Returns TRUE if the version of the GLib header files compiled against are the same as or newer than the passed-in version. 
-   */
-PHP_METHOD(Glib, checkVersion)
-{
-	long major = 0, micro = 0, minor = 0;
-	const char * version_error;
-
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l|ll", &major, &minor, &micro) == FAILURE) {
-		return;
-	}
-
-	RETURN_BOOL(GLIB_CHECK_VERSION(major, minor, micro));
-}
-/* }}} */
 
 /* {{{ proto string Glib::localeToUtf8(string text)
 	   Converts a string which is in the encoding used for strings in the current locale into a UTF-8 string. 

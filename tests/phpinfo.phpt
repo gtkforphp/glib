@@ -1,9 +1,7 @@
 --TEST--
 glib phpinfo information
 --SKIPIF--
-<?php
-include __DIR__ . '/skipif.inc';
-?>
+<?php include __DIR__ . '/skipif.inc'; ?>
 --FILE--
 <?php
 declare(strict_types=1);
@@ -16,6 +14,7 @@ $ext->info();
 glib
 
 GLib extension => enabled
-Glib Library Version => 2.%d.%d
+Runtime Glib Library Version => 2.%d.%d
+Compiled Glib Library Version => 2.%d.%d
 Extension Version => %s
 = DONE =

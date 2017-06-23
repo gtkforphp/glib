@@ -8,14 +8,13 @@ class Context
     {
     }
     
-    /*
     static public function getDefault() : Context
     {
     }
     
     static public function getThreadDefault() : Context
     {
-    } */
+    }
     
     public function iteration(bool $may_block) : bool
     {

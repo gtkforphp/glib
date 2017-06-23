@@ -24,6 +24,7 @@
 #include "php_glib.h"
 #include "php_glib_internal.h"
 
+zend_class_entry *glib_ce_main_context;
 static zend_object_handlers glib_main_context_object_handlers;
 static zend_object* glib_main_context_get_default_object(zend_class_entry *ce, zend_bool get_default);
 

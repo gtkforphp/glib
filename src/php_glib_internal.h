@@ -33,7 +33,7 @@ typedef struct _glib_main_context_object {
 	zend_object std;
 } glib_main_context_object;
 
-zend_class_entry *glib_ce_main_context;
+extern zend_class_entry *glib_ce_main_context;
 
 static inline glib_main_context_object *glib_main_context_fetch_object(zend_object *object)
 {
@@ -41,7 +41,8 @@ static inline glib_main_context_object *glib_main_context_fetch_object(zend_obje
 }
 #define Z_GLIB_MAIN_CONTEXT_P(zv) glib_main_context_fetch_object(Z_OBJ_P(zv))
 
-/* Glib Classes to register */
+/* Glib functions and classes to register */
+extern const zend_function_entry php_glib_functions[];
 PHP_MINIT_FUNCTION(glib_main_context);
 PHP_MINIT_FUNCTION(glib_main_loop);
 PHP_MINIT_FUNCTION(glib_timer);

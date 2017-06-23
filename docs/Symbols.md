@@ -1,3 +1,39 @@
+### Glib Fundamentals
+
+### Version Information
+
+| Symbol | PHP | Notes |
+| --- | --- | --- |
+| glib_check_version() | Glib\check_version() | namespace function |
+| GLIB_VERSION_CHECK | Glib\check_compiled_version() | C Macro |
+| glib_major_version | Glib::MAJOR_VERSION | namespaced constant |
+| glib_minor_version | Glib::MINOR_VERSION | namespaced constant |
+| glib_micro_version | Glib::MICRO_VERSION | namespaced constant |
+| glib_binary_age | Glib::BINARY_AGE | namespaced constant |
+| glib_interface_age | Glib::INTERFACE_AGE | namespaced constant |
+| GLIB_MAJOR_VERSION | Glib::COMPILED_MAJOR_VERSION | C compile time constant |
+| GLIB_MINOR_VERSION | Glib::COMPILED_MINOR_VERSION | C compile time constant |
+| GLIB_MICRO_VERSION | Glib::COMPILED_MICRO_VERSION | C compile time constant |
+| GLIB_VERSION_2_26 | IGNORED | C Macro |
+| GLIB_VERSION_2_28 | IGNORED | C Macro |
+| GLIB_VERSION_2_30 | IGNORED | C Macro |
+| GLIB_VERSION_2_32 | IGNORED | C Macro |
+| GLIB_VERSION_2_34 | IGNORED | C Macro |
+| GLIB_VERSION_2_36 | IGNORED | C Macro |
+| GLIB_VERSION_2_38 | IGNORED | C Macro |
+| GLIB_VERSION_2_40 | IGNORED | C Macro |
+| GLIB_VERSION_2_30 | IGNORED | C Macro |
+| GLIB_VERSION_2_42 | IGNORED | C Macro |
+| GLIB_VERSION_2_44 | IGNORED | C Macro |
+| GLIB_VERSION_2_46 | IGNORED | C Macro |
+| GLIB_VERSION_2_48 | IGNORED | C Macro |
+| GLIB_VERSION_2_50 | IGNORED | C Macro |
+| GLIB_VERSION_MIN_REQUIRED | IGNORED | C Macro |
+| GLIB_VERSION_MAX_ALLOWED | IGNORED | C Macro |
+| GLIB_DISABLE_DEPRECATION_WARNINGS | IGNORED | C Macro |	
+
+
+
 GTimer					Glib\Timer
 g_timer_new				(__construct)		
 g_timer_start				Timer->start
@@ -68,6 +104,8 @@ g_main_current_source	Glib\Main\current_source() : Glib\Main\Source
 
 
 GSource		Glib\Source
+
+https://github.com/davidmalcolm/pygobject/tree/master/gi/_glib
 
 
 
