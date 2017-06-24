@@ -76,6 +76,22 @@ PHP_FUNCTION(check_compiled_version)
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO(depth_args, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+/* {{{ proto boolean Glib\Main\depth())
+	   Returns the depth of the stack of calsl to dispatch on any main thread 
+   */
+PHP_FUNCTION(depth)
+{
+	if (zend_parse_parameters_none_throw() == FAILURE) {
+		return;
+	}
+
+	RETURN_LONG(g_main_depth());
+}
+/* }}} */
+
 /* ----------------------------------------------------------------
     Glib Namespaced Functions Registration
 ------------------------------------------------------------------*/
@@ -83,5 +99,6 @@ PHP_FUNCTION(check_compiled_version)
 const zend_function_entry php_glib_functions[] = {
 	ZEND_NS_FE(GLIB_NAMESPACE, check_version, check_version_args)
     ZEND_NS_FE(GLIB_NAMESPACE, check_compiled_version, check_compiled_version_args)
+	ZEND_NS_FE(ZEND_NS_NAME(GLIB_NAMESPACE, "Main"), depth, depth_args)
 	ZEND_FE_END
 };

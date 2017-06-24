@@ -15,7 +15,7 @@ echo 'Time elapsed was ' , $timer->elapsed(), PHP_EOL;
 $array = range(0, 10000);
 
 // reset the timer to 0
-$timer->reset();
+$timer->start();
 foreach($array as $i) {
     $foo = "I am $i";
 }
