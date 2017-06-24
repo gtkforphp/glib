@@ -203,6 +203,44 @@ PHP_METHOD(GlibMainContext, dispatch)
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO(Context_pushThread_args, IS_VOID, 0)
+ZEND_END_ARG_INFO()
+
+/* {{{ proto void \Glib\Main\Context->pushThread()
+		sets the context as the thread default for teh current thread
+   */
+PHP_METHOD(GlibMainContext, pushThread)
+{
+	glib_main_context_object *context_object;
+	if (zend_parse_parameters_none_throw() == FAILURE) {
+		return;
+	}
+
+	context_object = Z_GLIB_MAIN_CONTEXT_P(getThis());
+
+	g_main_context_push_thread_default(context_object->main_context);
+}
+/* }}} */
+
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO(Context_popThread_args, IS_VOID, 0)
+ZEND_END_ARG_INFO()
+
+/* {{{ proto void \Glib\Main\Context->popThread()
+		pops the context off the top of the stack
+   */
+PHP_METHOD(GlibMainContext, popThread)
+{
+	glib_main_context_object *context_object;
+	if (zend_parse_parameters_none_throw() == FAILURE) {
+		return;
+	}
+
+	context_object = Z_GLIB_MAIN_CONTEXT_P(getThis());
+
+	g_main_context_pop_thread_default(context_object->main_context);
+}
+/* }}} */
+
 
 ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO(Context_getDefault_args, "Glib\\Main\\Context", 0)
 ZEND_END_ARG_INFO()
@@ -308,6 +346,8 @@ static const zend_function_entry glib_main_context_methods[] = {
 	PHP_ME(GlibMainContext, dispatch, Context_dispatch_args, ZEND_ACC_PUBLIC)
 	PHP_ME(GlibMainContext, getDefault, Context_getDefault_args, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
 	PHP_ME(GlibMainContext, getThreadDefault, Context_getThreadDefault_args, ZEND_ACC_PUBLIC|ZEND_ACC_STATIC)
+	PHP_ME(GlibMainContext, pushThread, Context_pushThread_args, ZEND_ACC_PUBLIC)
+	PHP_ME(GlibMainContext, popThread, Context_popThread_args, ZEND_ACC_PUBLIC)
 	ZEND_FE_END
 };
 
