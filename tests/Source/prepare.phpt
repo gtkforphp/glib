@@ -8,13 +8,7 @@ declare(strict_types=1);
 use Glib\Source;
 use Glib\Main\Context;
 
-// class that will ONLY call prepare
-class preparesource extends Source{
-public function prepare() : array { echo 'calling prepare' . PHP_EOL; return [false, 0];}
-public function check() : bool { return false;}
-public function dispatch(callable $callback, array $args) : bool { return false; }
-public function finalize() : void { }
-}
+include __DIR__ . '/source_test.inc';
 $object = new preparesource();
 
 // run prepare once in our loop

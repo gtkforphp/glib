@@ -8,13 +8,8 @@ declare(strict_types=1);
 use Glib\Source;
 use Glib\Main\Context;
 
-// class that will call prepare and check
-class checksource extends Source{
-public function prepare() : array {return [false, -1];}
-public function check() : bool { echo 'calling check', PHP_EOL; return false;}
-public function dispatch(callable $callback, array $args) : bool { return false; }
-public function finalize() : void { }
-}
+include __DIR__ . '/source_test.inc';
+
 $object = new checksource();
 
 // run prepare once in our loop

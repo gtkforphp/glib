@@ -194,10 +194,18 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO(Source_check_args, _IS_BOOL, 0)
 ZEND_END_ARG_INFO()
 
+/* These arguments are optional and nullable which makes PHP 7 unhappy */
+#if PHP_VERSION_ID < 70100
+ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO(Source_dispatch_args, _IS_BOOL, 0)
+	ZEND_ARG_INFO(0, callback)
+	ZEND_ARG_INFO(0, args)
+ZEND_END_ARG_INFO()
+#else
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO(Source_dispatch_args, _IS_BOOL, 0)
 	ZEND_ARG_TYPE_INFO(0, callback, IS_CALLABLE, 1)
 	ZEND_ARG_TYPE_INFO(0, args, IS_ARRAY, 1)
 ZEND_END_ARG_INFO()
+#endif
 
 /* If you actually typehint null we can't define this in 7.0 */
 #if PHP_VERSION_ID < 70100
