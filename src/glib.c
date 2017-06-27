@@ -46,6 +46,7 @@ PHP_MINIT_FUNCTION(glib)
 	/* Register our Core application support classes */ 
 	PHP_MINIT(glib_main_context)(INIT_FUNC_ARGS_PASSTHRU);
 	PHP_MINIT(glib_main_loop)(INIT_FUNC_ARGS_PASSTHRU);
+	PHP_MINIT(glib_source)(INIT_FUNC_ARGS_PASSTHRU);
 
 	/* Register our utitilty classes */
 	PHP_MINIT(glib_timer)(INIT_FUNC_ARGS_PASSTHRU);

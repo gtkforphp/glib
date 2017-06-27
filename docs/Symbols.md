@@ -394,15 +394,17 @@ guint 	g_child_watch_add ()
 guint 	g_child_watch_add_full ()
 gint 	g_poll ()
 void 	(*GSourceDummyMarshal) ()
-GSource * 	g_source_new ()
-GSource * 	g_source_ref ()
-void 	g_source_unref ()
-void 	g_source_set_funcs ()
-guint 	g_source_attach ()
-void 	g_source_destroy ()
-gboolean 	g_source_is_destroyed ()
-void 	g_source_set_priority ()
-gint 	g_source_get_priority ()
+| g_source_new() | (__construct) |  |
+| g_source_ref() | (__construct) | |
+| g_source_unref() | (__construct) | |
+| g_source_set_funcs() | NOT SURE _ override with closures? sigh | |
+| g_source_attach() | Source->attach() | |
+| g_source_destroy() | Source->destroy() | we also call this in (__destruct) for good measure |
+| g_source_is_destroyed() | Source->isDestroyed() | |
+| g_source_set_priority() | Source->setPriority() | |
+| g_source_get_priority() | Source->getPriority() | |
+
+
 void 	g_source_set_can_recurse ()
 gboolean 	g_source_get_can_recurse ()
 guint 	g_source_get_id ()
@@ -442,7 +444,7 @@ typedef 	GPid
 #define 	G_PID_FORMAT
 struct 	GPollFD
 #define 	G_POLLFD_FORMAT
-| GSource | Glib\Main\Source |  |
+| GSource | Glib\Source |  |
 struct 	GSourceFuncs
 struct 	GSourceCallbackFuncs
 

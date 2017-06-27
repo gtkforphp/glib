@@ -15,6 +15,7 @@ if test "$PHP_GLIB" != "no"; then
     src/functions.c \
     src/main_context.c \
     src/main_loop.c \
+    src/source.c \
     src/timer.c \
   , $ext_shared)
 
