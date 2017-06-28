@@ -34,6 +34,8 @@ typedef struct _glib_main_context_object {
 } glib_main_context_object;
 
 extern zend_class_entry *glib_ce_main_context;
+extern zend_class_entry *glib_ce_source;
+extern zend_object_handlers glib_source_object_handlers;
 
 static inline glib_main_context_object *glib_main_context_fetch_object(zend_object *object)
 {
@@ -41,10 +43,24 @@ static inline glib_main_context_object *glib_main_context_fetch_object(zend_obje
 }
 #define Z_GLIB_MAIN_CONTEXT_P(zv) glib_main_context_fetch_object(Z_OBJ_P(zv))
 
+typedef struct _glib_source_object {
+	GSource *source;
+  zend_bool is_php_source;
+	zend_object std;
+} glib_source_object;
+
+static inline glib_source_object *glib_source_fetch_object(zend_object *object)
+{
+	return (glib_source_object *) ((char*)(object) - XtOffsetOf(glib_source_object, std));
+}
+#define Z_GLIB_SOURCE_P(zv) glib_source_fetch_object(Z_OBJ_P(zv))
+
 /* Glib functions and classes to register */
 extern const zend_function_entry php_glib_functions[];
 PHP_MINIT_FUNCTION(glib_main_context);
 PHP_MINIT_FUNCTION(glib_main_loop);
+PHP_MINIT_FUNCTION(glib_source);
+PHP_MINIT_FUNCTION(glib_source_timeout);
 PHP_MINIT_FUNCTION(glib_timer);
 
 #endif /* PHP_GLIB_INTERNAL_H */

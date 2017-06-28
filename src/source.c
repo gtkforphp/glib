@@ -25,23 +25,25 @@
 #include "php_glib_internal.h"
 
 zend_class_entry *glib_ce_source;
-static zend_object_handlers glib_source_object_handlers;
+zend_object_handlers glib_source_object_handlers;
 
-typedef struct _php_glib_source {
+typedef struct _GPhpSource {
 	GSource source;
 	zval    source_zval;
-} php_glib_source;
+} GPhpSource;
 
-typedef struct _glib_source_object {
-	php_glib_source *source;
-	zend_object std;
-} glib_source_object;
+static gboolean php_glib_source_prepare(GSource *source, gint *timeout);
+static gboolean php_glib_source_dispatch(GSource *source, GSourceFunc callback, gpointer userdata);
+static gboolean php_glib_source_check(GSource *source);
+static void php_glib_source_finalize(GSource *source);
 
-static inline glib_source_object *glib_source_fetch_object(zend_object *object)
+static GSourceFuncs php_glib_source_funcs = 
 {
-	return (glib_source_object *) ((char*)(object) - XtOffsetOf(glib_source_object, std));
-}
-#define Z_GLIB_SOURCE_P(zv) glib_source_fetch_object(Z_OBJ_P(zv))
+	php_glib_source_prepare,
+	php_glib_source_check,
+	php_glib_source_dispatch,
+	php_glib_source_finalize
+};
 
 /* ----------------------------------------------------------------
     Glib\Source class API
@@ -61,11 +63,16 @@ PHP_METHOD(GlibSource, __construct)
 
 	// we put the zval in the php_glib_source and shake it all up
 	glib_source_object * source_object = Z_GLIB_SOURCE_P(getThis());
+	source_object->source = g_source_new(&php_glib_source_funcs, sizeof(GPhpSource));
+	source_object->source = g_source_ref(source_object->source);
+	source_object->is_php_source = TRUE;
+
+	GPhpSource *gsource = (GPhpSource *)source_object->source;
 
 	// copy our zval into our internal struct, return with getContext
-	ZVAL_COPY(&source_object->source->source_zval, getThis());
-	zval_add_ref(&source_object->source->source_zval);
-	zval_add_ref(&source_object->source->source_zval);
+	ZVAL_COPY(&gsource->source_zval, getThis());
+	zval_add_ref(&gsource->source_zval);
+	zval_add_ref(&gsource->source_zval);
 }
 /* }}} */
 
@@ -93,13 +100,14 @@ PHP_METHOD(GlibSource, attach)
 
 	context_object = Z_GLIB_MAIN_CONTEXT_P(context_zval);
 	source_object = Z_GLIB_SOURCE_P(getThis());
+	GLIB_CHECK_INITIALIZED(source_object->source, Glib\\Source)
 	
-	if(g_source_is_destroyed((GSource *)source_object->source)) {
+	if(g_source_is_destroyed(source_object->source)) {
 		zend_throw_exception(spl_ce_RuntimeException, "Source has been destroyed", 0);
 		return;
 	}
 
-	RETURN_LONG(g_source_attach((GSource *)source_object->source, context_object->main_context));
+	RETURN_LONG(g_source_attach(source_object->source, context_object->main_context));
 }
 /* }}} */
 
@@ -118,8 +126,9 @@ PHP_METHOD(GlibSource, destroy)
 	}
 
 	source_object = Z_GLIB_SOURCE_P(getThis());
+	GLIB_CHECK_INITIALIZED(source_object->source, Glib\\Source)
 
-	g_source_destroy((GSource *)source_object->source);
+	g_source_destroy(source_object->source);
 }
 /* }}} */
 
@@ -138,8 +147,9 @@ PHP_METHOD(GlibSource, isDestroyed)
 	}
 
 	source_object = Z_GLIB_SOURCE_P(getThis());
+	GLIB_CHECK_INITIALIZED(source_object->source, Glib\\Source)
 
-	RETURN_BOOL(g_source_is_destroyed((GSource *)source_object->source));
+	RETURN_BOOL(g_source_is_destroyed(source_object->source));
 }
 /* }}} */
 
@@ -161,9 +171,10 @@ PHP_METHOD(GlibSource, setPriority)
 	}
 
 	source_object = Z_GLIB_SOURCE_P(getThis());
+	GLIB_CHECK_INITIALIZED(source_object->source, Glib\\Source)
 	set_priority = priority;
 
-	g_source_set_priority((GSource *)source_object->source, priority);
+	g_source_set_priority(source_object->source, priority);
 }
 /* }}} */
 
@@ -182,8 +193,9 @@ PHP_METHOD(GlibSource, getPriority)
 	}
 
 	source_object = Z_GLIB_SOURCE_P(getThis());
+	GLIB_CHECK_INITIALIZED(source_object->source, Glib\\Source)
 
-	RETURN_LONG(g_source_get_priority((GSource *)source_object->source));
+	RETURN_LONG(g_source_get_priority(source_object->source));
 }
 /* }}} */
 
@@ -259,7 +271,7 @@ php_glib_source_prepare(GSource *source, gint *timeout)
 	gboolean retval = FALSE;
 	zend_long php_timeout = -1;
 	zval php_retval;
-	php_glib_source *glib_source = (php_glib_source*) source;
+	GPhpSource *glib_source = (GPhpSource*) source;
 
 	glib_source_callback_helper(&php_retval, &glib_source->source_zval, "prepare", NULL, 0);
 
@@ -294,7 +306,7 @@ php_glib_source_check(GSource *source)
 {
 	gboolean retval = FALSE;
 	zval php_retval;
-	php_glib_source *glib_source = (php_glib_source*)source;
+	GPhpSource *glib_source = (GPhpSource*)source;
 
 	glib_source_callback_helper(&php_retval, &glib_source->source_zval, "check", NULL, 0);
 
@@ -317,7 +329,7 @@ php_glib_source_dispatch(GSource *source, GSourceFunc callback, gpointer userdat
 {
 	gboolean retval = FALSE;
 	zval php_retval;
-	php_glib_source *glib_source = (php_glib_source*)source;
+	GPhpSource *glib_source = (GPhpSource*)source;
 
 	// TODO: make this work properly?
 	// for now send nulls
@@ -327,7 +339,7 @@ php_glib_source_dispatch(GSource *source, GSourceFunc callback, gpointer userdat
 	ZVAL_NULL(&args[1]);
 	
 
-	glib_source_callback_helper(&php_retval, &glib_source->source_zval, "dispatch", &args, 2);
+	glib_source_callback_helper(&php_retval, &glib_source->source_zval, "dispatch", (zval *)args, 2);
 
 	/* we are expecting a boolean return value
 		return typehints will error on exception */
@@ -348,7 +360,7 @@ php_glib_source_finalize(GSource *source)
 {
 	gboolean retval = FALSE;
 	zval php_retval;
-	php_glib_source *glib_source = (php_glib_source*)source;
+	GPhpSource *glib_source = (GPhpSource*)source;
 
 	glib_source_callback_helper(&php_retval, &glib_source->source_zval, "finalize", NULL, 0);
 
@@ -359,14 +371,6 @@ php_glib_source_finalize(GSource *source)
 
 	zval_ptr_dtor(&php_retval);
 }
-
-static GSourceFuncs php_glib_source_funcs = 
-{
-	php_glib_source_prepare,
-	php_glib_source_check,
-	php_glib_source_dispatch,
-	php_glib_source_finalize
-};
 
 /* ----------------------------------------------------------------
     Glib\Source Object management
@@ -381,17 +385,22 @@ void glib_source_free_obj(zend_object *object)
 		return;
 	}
 
-	php_glib_source *source = (php_glib_source *)intern->source;
+	GSource *source = (GSource *)intern->source;
 
 	/* this will make finalize call, we MUST do this before freeing the source zval */
-	g_source_destroy(&source->source);
-	g_source_unref(&source->source);
+	if(intern->source != NULL) {
+		g_source_destroy(source);
+		g_source_unref(source);
 
-	if(!Z_ISNULL(source->source_zval) &&
-		!Z_ISUNDEF(source->source_zval)) {
+		if(intern->is_php_source) {
+			GPhpSource *psource = (GPhpSource *)intern->source;
+			if(!Z_ISNULL(psource->source_zval) &&
+				!Z_ISUNDEF(psource->source_zval)) {
 
-		Z_TRY_DELREF_P(&source->source_zval);
-		ZVAL_UNDEF(&source->source_zval);
+				Z_TRY_DELREF_P(&psource->source_zval);
+				ZVAL_UNDEF(&psource->source_zval);
+			}
+		}
 	}
 
 	zend_object_std_dtor(&intern->std);
@@ -404,10 +413,8 @@ static zend_object* glib_source_create_object(zend_class_entry *ce)
 
 	intern = ecalloc(1, sizeof(glib_source_object) + zend_object_properties_size(ce));
 
-	// g_source_new sets our refcount to 1, we unref in the destructor to kill it
-	intern->source = (php_glib_source *)g_source_new(&php_glib_source_funcs, sizeof(php_glib_source));
-	intern->source = g_source_ref(intern->source);
-	ZVAL_UNDEF(&(intern->source->source_zval));
+	intern->is_php_source = FALSE;
+	intern->source = NULL;
 
 	zend_object_std_init(&(intern->std), ce);
 	object_properties_init(&(intern->std), ce);

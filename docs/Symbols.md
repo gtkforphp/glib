@@ -374,12 +374,12 @@ All through for now all atomic operations are ignored, they may be implemented o
 | g_main_context_invoke_full() | Glib\Main\Context->invoke() | TODO: need gsourcefun working |
 | g_main_context_get_thread_default() | IGNORED | wrapped ref thread version instead |
 | g_main_context_ref_thread_default() | Glib\Main\Context::getThreadDefault() | static construtor |
-| g_main_context_push_thread_default() | Glib\Main\Context->pushThreadDefault() | static construtor |
-| g_main_context_pop_thread_default() | Glib\Main\Context->popThreadDefault() | static construtor |
+| g_main_context_push_thread_default() | Glib\Main\Context->pushThreadDefault() | |
+| g_main_context_pop_thread_default() | Glib\Main\Context->popThreadDefault() | |
+| g_timeout_source_new() | (__construct) |  |
+| g_timeout_source_new_seconds() | Glib\Source\Timeout::newSeconds() | static constructor |
 
 
-GSource * 	g_timeout_source_new ()
-GSource * 	g_timeout_source_new_seconds ()
 guint 	g_timeout_add ()
 guint 	g_timeout_add_full ()
 guint 	g_timeout_add_seconds ()
