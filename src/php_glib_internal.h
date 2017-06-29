@@ -43,11 +43,25 @@ static inline glib_main_context_object *glib_main_context_fetch_object(zend_obje
 }
 #define Z_GLIB_MAIN_CONTEXT_P(zv) glib_main_context_fetch_object(Z_OBJ_P(zv))
 
+typedef struct _GPhpSource {
+	GSource source;
+	zval    source_zval;
+} GPhpSource;
+
+typedef struct _GPhpTimeoutSource {
+	GSource  source;
+	guint    interval;
+	gboolean seconds;
+	zval     source_zval;
+} GPhpTimeoutSource;
+
 typedef struct _glib_source_object {
 	GSource *source;
   zend_bool is_php_source;
 	zend_object std;
 } glib_source_object;
+
+GSourceFuncs php_glib_source_funcs;
 
 static inline glib_source_object *glib_source_fetch_object(zend_object *object)
 {

@@ -46,11 +46,19 @@ PHP_METHOD(GlibSourceTimeout, __construct)
 
     interval = php_interval;
 
-	// we put the zval in the php_glib_source and shake it all up
 	glib_source_object * source_object = Z_GLIB_SOURCE_P(getThis());
 
+    // get our GTimeoutSource created
     source_object->source = g_timeout_source_new(interval);
-	source_object->source = g_source_ref((GSource *)source_object->source);
+    // reallocate it to get enough room for our cache zval
+    source_object->source = g_try_realloc(source_object->source, sizeof(GPhpTimeoutSource));
+    source_object->source = g_source_ref((GSource *)source_object->source);
+    
+    GPhpTimeoutSource *psource = (GPhpTimeoutSource *)source_object->source;
+    
+    // copy our zval into our internal struct, return with getContext
+	ZVAL_COPY(&psource->source_zval, getThis());
+	zval_add_ref(&psource->source_zval);
 }
 /* }}} */
 

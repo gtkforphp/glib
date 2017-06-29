@@ -94,6 +94,56 @@ PHP_METHOD(GlibMainContext, pending)
 }
 /* }}} */
 
+ZEND_BEGIN_ARG_WITH_RETURN_OBJ_INFO(Context_findSourceById_args, "Glib\\Source", 1)
+	ZEND_ARG_TYPE_INFO(0, id, IS_LONG, 0)
+ZEND_END_ARG_INFO()
+
+/* {{{ proto ?Source \Glib\Main\Context->findSourceById(int $id)
+		finds a source in the context with the id - may be null
+   */
+PHP_METHOD(GlibMainContext, findSourceById)
+{
+	glib_main_context_object *context_object;
+	zend_long php_id;
+	guint source_id;
+
+	if (zend_parse_parameters_throw(ZEND_NUM_ARGS(), "l", &php_id) == FAILURE) {
+		return;
+	}
+
+	context_object = Z_GLIB_MAIN_CONTEXT_P(getThis());
+	source_id = php_id;
+
+	GSource * source = g_main_context_find_source_by_id(
+						context_object->main_context,
+						source_id);
+
+	if(source != NULL) {
+		if(source->source_funcs == &g_timeout_funcs) {
+			GPhpTimeoutSource *psource = (GPhpTimeoutSource *)source;
+
+			if(!Z_ISNULL(psource->source_zval) &&
+				!Z_ISUNDEF(psource->source_zval) &&
+				Z_REFCOUNT(psource->source_zval) > 0) {
+
+				zval_ptr_dtor(return_value);
+				ZVAL_COPY(return_value, &psource->source_zval);
+			}
+		} else if(source->source_funcs == &php_glib_source_funcs) {
+			GPhpSource *psource = (GPhpSource *)source;
+
+			if(!Z_ISNULL(psource->source_zval) &&
+				!Z_ISUNDEF(psource->source_zval) &&
+				Z_REFCOUNT(psource->source_zval) > 0) {
+
+				zval_ptr_dtor(return_value);
+				ZVAL_COPY(return_value, &psource->source_zval);
+			}
+		}
+	}
+}
+/* }}} */
+
 ZEND_BEGIN_ARG_WITH_RETURN_TYPE_INFO(Context_wakeup_args, IS_VOID, 0)
 ZEND_END_ARG_INFO()
 
@@ -340,6 +390,7 @@ static const zend_function_entry glib_main_context_methods[] = {
 	PHP_ME(GlibMainContext, __construct, Context___construct_args, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
 	PHP_ME(GlibMainContext, iteration, Context_iteration_args, ZEND_ACC_PUBLIC)
 	PHP_ME(GlibMainContext, pending, Context_pending_args, ZEND_ACC_PUBLIC)
+	PHP_ME(GlibMainContext, findSourceById, Context_findSourceById_args, ZEND_ACC_PUBLIC)
 	PHP_ME(GlibMainContext, wakeup, Context_wakeup_args, ZEND_ACC_PUBLIC)
 	PHP_ME(GlibMainContext, isOwner, Context_isOwner_args, ZEND_ACC_PUBLIC)
 	PHP_ME(GlibMainContext, prepare, Context_prepare_args, ZEND_ACC_PUBLIC)

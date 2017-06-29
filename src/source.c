@@ -27,24 +27,6 @@
 zend_class_entry *glib_ce_source;
 zend_object_handlers glib_source_object_handlers;
 
-typedef struct _GPhpSource {
-	GSource source;
-	zval    source_zval;
-} GPhpSource;
-
-static gboolean php_glib_source_prepare(GSource *source, gint *timeout);
-static gboolean php_glib_source_dispatch(GSource *source, GSourceFunc callback, gpointer userdata);
-static gboolean php_glib_source_check(GSource *source);
-static void php_glib_source_finalize(GSource *source);
-
-static GSourceFuncs php_glib_source_funcs = 
-{
-	php_glib_source_prepare,
-	php_glib_source_check,
-	php_glib_source_dispatch,
-	php_glib_source_finalize
-};
-
 /* ----------------------------------------------------------------
     Glib\Source class API
 ------------------------------------------------------------------*/
@@ -371,6 +353,14 @@ php_glib_source_finalize(GSource *source)
 
 	zval_ptr_dtor(&php_retval);
 }
+
+GSourceFuncs php_glib_source_funcs = 
+{
+	php_glib_source_prepare,
+	php_glib_source_check,
+	php_glib_source_dispatch,
+	php_glib_source_finalize
+};
 
 /* ----------------------------------------------------------------
     Glib\Source Object management
